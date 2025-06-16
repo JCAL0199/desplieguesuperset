@@ -1,0 +1,60 @@
+Antes de ejecutar el comando helm upgrade --install superset superset/superset -n superset -f superset-values.yaml
+Se necesita hacer los siguiente:
+######### Creamos una llave secreta se pueden ajustar la credenciales lo mas seguras que se puedan.
+
+kubectl create secret generic superset-secrets -n superset \
+--from-literal=secret-key=$(openssl rand -base64 42) \
+--from-literal=postgres-password=superset
+
+
+###si ya existe se borra y se vuelve a crear
+kubectl delete secret superset-secrets -n superset
+
+
+######### Modificaciones en el archivo superset-values.yaml
+
+extraSecretEnv:
+SUPERSET_SECRET_KEY:
+    secretKeyRef:
+    name: superset-secrets
+    key: secret-key
+
+postgresql:
+enabled: true
+postgresqlPassword:
+    secretKeyRef:
+    name: superset-secrets
+    key: postgres-password
+
+init:
+enabled: true
+envFromSecret: superset-secrets
+
+########## Instalar
+helm install superset superset/superset \
+  --namespace superset \
+  --create-namespace \
+  -f superset-values.yaml
+
+########## Actualizamos el ambiente (SOLO CUANDO SE QUIEREN AGREGAR MAS CONFIGURACIONES)
+helm upgrade --install superset superset/superset -n superset -f superset-values.yaml
+
+######### Desinstalar (SOLO SI SE NECESITA)
+helm uninstall superset -n superset
+
+
+######### Una vez desplegado revisamos la direccion IP
+kubectl get svc -n superset
+
+NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+superset                  ClusterIP   34.118.228.3    <none>        8088/TCP   2m20s
+
+
+######### Si aparece como tipo ClusterIP hay que cambiarlo en este caso lo pasamos a un loadbalancer
+kubectl patch svc -n superset superset -p '{"spec":{"type":"LoadBalancer"}}'
+
+NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)          AGE
+superset                  LoadBalancer   34.118.228.3    34.59.47.231   8088:31752/TCP   25m
+
+###### Pasar superset al http:\\localhost:8088
+kubectl port-forward -n superset pod/superset-6b6fbbf7b8-4xgwm 8088:8088

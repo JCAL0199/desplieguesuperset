@@ -1,0 +1,37 @@
+1- Se clona el proyecto superset apache
+2- Se instalan las dependencias con npm install ci
+    * se necesita tener instalado nodejs(v18.20.8) y npm(10.8.2)
+3- Se hacen los ajustes necesarios en el front
+4- Se ejecuta el comando npm run build para generar los estaticos del proyecto
+5- Se ejecutan el Dockerfile.nttdata para genera la imagen customizada
+6- Se sube a un repositorio de imagenes
+7- Una vez subida al repositorio de imagenes se edita el archivo superset-values.yaml con la siguiente información de la imagén
+    image:
+      repository: usuario_o_link_del_repositorio_de_imagenes/nombre_de_la_imagen
+      tag: latest
+      pullPolicy: Always
+
+    Ejemplos:
+    GCP:
+        image:
+            repository: <region>-docker.pkg.dev/<project-id>/<repo-name>/superset-oracle-v1
+            tag: latest
+            pullPolicy: Always
+
+    AWS:
+        image:
+            repository: <aws_account_id>.dkr.ecr.<region>.amazonaws.com/superset-oracle-v1
+            tag: latest
+            pullPolicy: Always
+
+    AZURE:
+        image:
+            repository: <registry-name>.azurecr.io/superset-oracle-v1
+            tag: latest
+            pullPolicy: Always
+
+    DockerHub:
+        image:
+            repository: repositoriodockerhub/superset-oracle-v1
+            tag: latest
+            pullPolicy: Always
