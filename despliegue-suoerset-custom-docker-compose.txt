@@ -1,0 +1,45 @@
+##### Ejecutas el proyecto terraform que esta en este repositorio (terraform-despliegue-superset) #####
+    * Esto generará una maquina virtual con sus correspondientes puertos abiertos para poder conectarnos y que la aplicación funcione
+
+##### Concetarse por SSH a la maquina virtual creada y ejecutar los siguientes comandos #####
+
+    # Docker
+    sudo apt update && sudo apt install -y docker.io
+    sudo systemctl enable docker
+    sudo usermod -aG docker $USER
+
+    # Docker Compose
+    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    docker-compose --version
+
+
+##### Clonar el proyecto custom de superset #####
+    git clone https://github.com/apache/superset.git
+
+    git clone https://github.com/JCAL0199/supersetcustom.git
+
+    *** se accede al clonado del repositorio esto puede variar depende de como se llama el repositorio custom
+        cd nombre_carpeta_custom_superset
+
+    *** si se necesita cambiar de rama 
+        git checkout rama_donde_estan_los_cambios o git checkout -b rama_custom_superset origin/rama_custom_superset
+
+##### Ejecutamos el superset con docker-compose #####
+docker-compose -f docker-compose-custom-prod.yml up -d
+
+##### Solucionar problemas de autenticación (403) #####
+
+    Ejecuta estos comandos después de que los contenedores estén en funcionamiento:
+    bash
+
+    docker-compose exec superset superset fab create-admin \
+    --username admin \
+    --firstname Admin \
+    --lastname User \
+    --email admin@superset.com \
+    --password admin
+
+    docker-compose exec superset superset db upgrade
+    docker-compose exec superset superset init
+

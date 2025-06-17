@@ -1,9 +1,9 @@
-1- Se clona el proyecto superset apache
+1- Se clona el proyecto superset apache (git clone https://github.com/apache/superset.git)
 2- Se instalan las dependencias con npm install ci
     * se necesita tener instalado nodejs(v18.20.8) y npm(10.8.2)
 3- Se hacen los ajustes necesarios en el front
 4- Se ejecuta el comando npm run build para generar los estaticos del proyecto
-5- Se ejecutan el Dockerfile.nttdata para genera la imagen customizada
+5- Se ejecutan el Dockerfile.custom para genera la imagen customizada
 6- Se sube a un repositorio de imagenes
 7- Una vez subida al repositorio de imagenes se edita el archivo superset-values.yaml con la siguiente información de la imagén
     image:
